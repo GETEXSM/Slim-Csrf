@@ -111,7 +111,6 @@ class Guard implements MiddlewareInterface
      * @param integer                   $storageLimit
      * @param integer                   $strength
      * @param boolean                   $persistentTokenMode
-     * @param Array                     $ValidatedMethods
      * @throws RuntimeException if the session cannot be found
      */
     public function __construct(
@@ -121,9 +120,7 @@ class Guard implements MiddlewareInterface
         ?callable $failureHandler = null,
         int $storageLimit = 200,
         int $strength = 16,
-        bool $persistentTokenMode = false,
-        array $ValidatedMethods = ['POST', 'PUT', 'DELETE', 'PATCH']
-        
+        bool $persistentTokenMode = false
     ) {
         if ($strength < 16) {
             throw new RuntimeException('CSRF middleware instantiation failed. Minimum strength is 16.');
@@ -445,15 +442,11 @@ class Guard implements MiddlewareInterface
             $name = $body[$this->getTokenNameKey()] ?? null;
             $value = $body[$this->getTokenValueKey()] ?? null;
         }
-        if (($name == null || $value == null) && isset($args[$this->getTokenNameKey()], $args[$this->getTokenValueKey()])) {
-            $name = $args[$this->getTokenNameKey()];
-            $value = $args[$this->getTokenValueKey()];
+        if (($name == null || $value == null) && is_array($headers)) {
+            $name = $headers[$this->getTokenNameKey()][0] ??   null;
+            $value = $headers[$this->getTokenValueKey()][0] ??  null;
         }
-        if (($name == null || $value == null) && isset($headers[$this->getTokenNameKey()], $headers[$this->getTokenValueKey()])) {
-            $name = $headers[$this->getTokenNameKey()];
-            $value = $headers[$this->getTokenValueKey()];
-        }
-        if (in_array($request->getMethod(), $this->Validatedmethods)) {
+        if (in_array($request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH'])) {
             $isValid = $this->validateToken((string) $name, (string) $value);
             if ($isValid && !$this->persistentTokenMode) {
                 $this->removeTokenFromStorage($name);
