@@ -122,7 +122,7 @@ class Guard implements MiddlewareInterface
         int $storageLimit = 200,
         int $strength = 16,
         bool $persistentTokenMode = false,
-        array $ValidatedMethods = ['POST', 'PUT', 'DELETE', 'PATCH']
+        array $ValidatedMethods = ['POST', 'PUT', 'DELETE', 'PATCH','GET']
         
     ) {
         if ($strength < 16) {
@@ -445,14 +445,13 @@ class Guard implements MiddlewareInterface
             $name = $body[$this->getTokenNameKey()] ?? null;
             $value = $body[$this->getTokenValueKey()] ?? null;
         }
-        if (($name == null || $value == null) && isset($args[$this->getTokenNameKey()], $args[$this->getTokenValueKey()])) {
-            $name = $args[$this->getTokenNameKey()];
-            $value = $args[$this->getTokenValueKey()];
+        
+        if (($name == null || $value == null)) {
+            $name = $headers[$this->getTokenNameKey()][0] ??   null;
+            $value = $headers[$this->getTokenValueKey()][0] ??  null;
         }
-        if (($name == null || $value == null) && isset($headers[$this->getTokenNameKey()], $headers[$this->getTokenValueKey()])) {
-            $name = $headers[$this->getTokenNameKey()];
-            $value = $headers[$this->getTokenValueKey()];
-        }
+
+
         if (in_array($request->getMethod(), $this->Validatedmethods)) {
             $isValid = $this->validateToken((string) $name, (string) $value);
             if ($isValid && !$this->persistentTokenMode) {
