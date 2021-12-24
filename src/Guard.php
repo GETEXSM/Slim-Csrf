@@ -272,7 +272,7 @@ class Guard implements MiddlewareInterface
      */
     public function getTokenNameKey(): string
     {
-        return $this->prefix . '_name';
+        return $this->prefix . '-name';
     }
 
     /**
@@ -280,7 +280,7 @@ class Guard implements MiddlewareInterface
      */
     public function getTokenValueKey(): string
     {
-        return $this->prefix . '_value';
+        return $this->prefix . '-value';
     }
 
     /**
