@@ -127,7 +127,7 @@ class Guard implements MiddlewareInterface
         }
 
         $this->responseFactory = $responseFactory;
-        $this->prefix = rtrim($prefix, '_');
+        $this->prefix = rtrim($prefix, '-');
         $this->strength = $strength;
 
         $this->setStorage($storage);
@@ -454,10 +454,6 @@ class Guard implements MiddlewareInterface
 
             if ($name === null || $value === null || !$isValid) {
                 $request = $this->appendNewTokenToRequest($request);
-                return $this->handleFailure($request, $handler);
-            }
-        } else {
-            if ($name !== null) {
                 return $this->handleFailure($request, $handler);
             }
         }
